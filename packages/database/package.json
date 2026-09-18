@@ -1,0 +1,19 @@
+{
+  "name": "@repo/database",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Supabase schema: migrations, generated types, and the CLI scripts that apply them.",
+  "scripts": {
+    "db:link": "supabase link",
+    "db:push": "supabase db push",
+    "db:diff": "supabase db diff -f",
+    "db:new": "supabase migration new",
+    "db:status": "supabase migration list --linked",
+    "db:types": "supabase gen types typescript --linked --schema public > src/database.types.ts",
+    "db:lint": "supabase db lint --linked --level warning",
+    "db:advisors": "supabase db advisors --linked"
+  },
+  "devDependencies": {
+    "supabase": "^2.117.0"
+  }
+}

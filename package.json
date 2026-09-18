@@ -12,7 +12,15 @@
     "test:e2e": "turbo run test:e2e",
     "lint": "turbo run lint",
     "check-types": "turbo run check-types",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "bootstrap": "pnpm install && pnpm db:push && pnpm db:types",
+    "db:link": "pnpm --filter @repo/database db:link",
+    "db:push": "pnpm --filter @repo/database db:push",
+    "db:new": "pnpm --filter @repo/database db:new",
+    "db:diff": "pnpm --filter @repo/database db:diff",
+    "db:status": "pnpm --filter @repo/database db:status",
+    "db:types": "pnpm --filter @repo/database db:types",
+    "db:advisors": "pnpm --filter @repo/database db:advisors"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
