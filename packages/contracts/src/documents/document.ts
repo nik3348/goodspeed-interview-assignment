@@ -14,6 +14,29 @@ export const documentTagSchema = z
   .max(MAX_TAG_LENGTH)
   .toLowerCase();
 
+/**
+ * Whether this document's chunks are current.
+ *
+ * Surfaced to the client because embedding depends on a third party and can
+ * fail independently of the write. A document that saved fine but is missing
+ * from every answer is a confusing thing to debug from the outside.
+ */
+export const indexingStatusSchema = z.enum(['pending', 'indexed', 'failed']);
+
+export type IndexingStatus = z.infer<typeof indexingStatusSchema>;
+
+export const documentIndexingSchema = z.object({
+  status: indexingStatusSchema,
+  /** When the current content was embedded; null if it never was. */
+  indexedAt: z.string().nullable(),
+  /** Why the last attempt failed, for display and for deciding to retry. */
+  error: z.string().nullable(),
+  /** How many chunks the document produced. Null unless known. */
+  chunkCount: z.number().int().nonnegative().nullable(),
+});
+
+export type DocumentIndexing = z.infer<typeof documentIndexingSchema>;
+
 /** A document as the API returns it: camelCase, timestamps as ISO strings. */
 export const documentSchema = z.object({
   id: z.uuid(),
@@ -22,6 +45,7 @@ export const documentSchema = z.object({
   tags: z.array(z.string()),
   createdAt: z.string(),
   updatedAt: z.string(),
+  indexing: documentIndexingSchema,
 });
 
 export type Document = z.infer<typeof documentSchema>;

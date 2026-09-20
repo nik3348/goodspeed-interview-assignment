@@ -53,6 +53,13 @@ export class DocumentsController {
     return this.documents.create(user.id, body);
   }
 
+  /** Retries embedding after a failure, without changing the document. */
+  @Post(':id/reindex')
+  @HttpCode(HttpStatus.OK)
+  reindex(@Param('id', ParseUUIDPipe) id: string): Promise<Document> {
+    return this.documents.reindex(id);
+  }
+
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,

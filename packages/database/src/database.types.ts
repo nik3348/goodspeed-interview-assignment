@@ -63,6 +63,8 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          indexed_at: string | null
+          indexing_error: string | null
           tags: string[]
           title: string
           updated_at: string
@@ -72,6 +74,8 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          indexed_at?: string | null
+          indexing_error?: string | null
           tags?: string[]
           title: string
           updated_at?: string
@@ -81,6 +85,8 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          indexed_at?: string | null
+          indexing_error?: string | null
           tags?: string[]
           title?: string
           updated_at?: string

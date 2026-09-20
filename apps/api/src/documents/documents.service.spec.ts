@@ -2,6 +2,10 @@ import { ConflictException, NotFoundException } from '@nestjs/common';
 import type { PostgrestError } from '@supabase/supabase-js';
 import { beforeEach, describe, expect, it } from '@jest/globals';
 
+import type {
+  IndexingOutcome,
+  IndexingService,
+} from '../indexing/indexing.service';
 import type { SupabaseUserClient } from '../supabase/supabase-user-client';
 
 import { DocumentsService } from './documents.service';
@@ -49,16 +53,36 @@ class QueryBuilderStub {
   }
 }
 
-function serviceReturning(result: unknown): {
+const INDEXED: IndexingOutcome = {
+  status: 'indexed',
+  chunkCount: 2,
+  usage: null,
+};
+
+function serviceReturning(
+  result: unknown,
+  outcome: IndexingOutcome = INDEXED,
+): {
   service: DocumentsService;
   builder: QueryBuilderStub;
+  indexed: Array<{ documentId: string; content: string }>;
 } {
   const builder = new QueryBuilderStub(result);
-  const service = new DocumentsService({
-    db: builder,
-  } as unknown as SupabaseUserClient);
+  const indexed: Array<{ documentId: string; content: string }> = [];
 
-  return { service, builder };
+  const indexing = {
+    indexDocument: async (documentId: string, content: string) => {
+      indexed.push({ documentId, content });
+      return outcome;
+    },
+  } as unknown as IndexingService;
+
+  const service = new DocumentsService(
+    { db: builder, userId: 'user-1' } as unknown as SupabaseUserClient,
+    indexing,
+  );
+
+  return { service, builder, indexed };
 }
 
 function postgrestError(code: string): PostgrestError {
@@ -78,6 +102,9 @@ const ROW = {
   tags: ['bio'],
   created_at: '2026-09-20T10:00:00+00:00',
   updated_at: '2026-09-20T11:00:00+00:00',
+  indexed_at: '2026-09-20T11:00:05+00:00',
+  indexing_error: null,
+  document_chunks: [{ count: 3 }],
 };
 
 describe('DocumentsService', () => {
@@ -100,6 +127,12 @@ describe('DocumentsService', () => {
             tags: ROW.tags,
             createdAt: ROW.created_at,
             updatedAt: ROW.updated_at,
+            indexing: {
+              status: 'indexed',
+              indexedAt: ROW.indexed_at,
+              error: null,
+              chunkCount: 3,
+            },
           },
         ],
       });
@@ -290,6 +323,135 @@ describe('DocumentsService', () => {
       await expect(service.remove(ROW.id)).rejects.toBeInstanceOf(
         NotFoundException,
       );
+    });
+  });
+
+  describe('indexing', () => {
+    it('embeds the content it just stored on create', async () => {
+      const { service, indexed } = serviceReturning({
+        data: ROW,
+        error: null,
+      });
+
+      await service.create('user-1', {
+        title: ROW.title,
+        content: ROW.content,
+        tags: [],
+      });
+
+      expect(indexed).toEqual([
+        { documentId: ROW.id, content: ROW.content },
+      ]);
+    });
+
+    it('re-embeds when the content changed', async () => {
+      const { service, indexed } = serviceReturning({
+        data: { ...ROW, content: 'new body' },
+        error: null,
+      });
+
+      await service.update(ROW.id, { content: 'new body' });
+
+      expect(indexed).toHaveLength(1);
+    });
+
+    // Retitling does not change what the text means, so paying a provider to
+    // re-embed it would be waste.
+    it('does not re-embed for a title-only change', async () => {
+      const { service, indexed } = serviceReturning({
+        data: ROW,
+        error: null,
+      });
+
+      await service.update(ROW.id, { title: 'Renamed' });
+
+      expect(indexed).toEqual([]);
+    });
+
+    it('does not re-embed for a tag-only change', async () => {
+      const { service, indexed } = serviceReturning({
+        data: ROW,
+        error: null,
+      });
+
+      await service.update(ROW.id, { tags: ['physics'] });
+
+      expect(indexed).toEqual([]);
+    });
+
+    it('reports a successful index on the created document', async () => {
+      const { service } = serviceReturning({ data: ROW, error: null });
+
+      const document = await service.create('user-1', {
+        title: ROW.title,
+        content: ROW.content,
+        tags: [],
+      });
+
+      expect(document.indexing).toMatchObject({
+        status: 'indexed',
+        error: null,
+        chunkCount: 2,
+      });
+    });
+
+    // The document is still saved; the client needs to know it is not
+    // searchable rather than be told the write failed.
+    it('surfaces an indexing failure without failing the write', async () => {
+      const { service } = serviceReturning(
+        { data: ROW, error: null },
+        { status: 'failed', reason: 'provider out of credit' },
+      );
+
+      const document = await service.create('user-1', {
+        title: ROW.title,
+        content: ROW.content,
+        tags: [],
+      });
+
+      expect(document.id).toBe(ROW.id);
+      expect(document.indexing).toMatchObject({
+        status: 'failed',
+        error: 'provider out of credit',
+        indexedAt: null,
+      });
+    });
+
+    it('reads a never-indexed row as pending', async () => {
+      const { service } = serviceReturning({
+        data: { ...ROW, indexed_at: null, indexing_error: null },
+        error: null,
+      });
+
+      const document = await service.findOne(ROW.id);
+
+      expect(document.indexing.status).toBe('pending');
+    });
+
+    it('reads a row carrying an error as failed', async () => {
+      const { service } = serviceReturning({
+        data: { ...ROW, indexed_at: null, indexing_error: 'rate limited' },
+        error: null,
+      });
+
+      const document = await service.findOne(ROW.id);
+
+      expect(document.indexing).toMatchObject({
+        status: 'failed',
+        error: 'rate limited',
+      });
+    });
+
+    it('re-embeds the stored content on an explicit reindex', async () => {
+      const { service, indexed } = serviceReturning({
+        data: ROW,
+        error: null,
+      });
+
+      const document = await service.reindex(ROW.id);
+
+      expect(indexed).toEqual([{ documentId: ROW.id, content: ROW.content }]);
+      expect(document.indexing.status).toBe('indexed');
     });
   });
 });

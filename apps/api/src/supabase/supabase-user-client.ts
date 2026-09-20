@@ -23,6 +23,11 @@ export class SupabaseUserClient {
     private readonly supabase: SupabaseService,
   ) {}
 
+  /** The signed-in caller's id, for columns that record ownership. */
+  get userId(): string {
+    return getRequestAuth(this.request).user.id;
+  }
+
   /** Queries through this client run as the caller, subject to RLS. */
   get db(): TypedSupabaseClient {
     this.client ??= this.supabase.forUser(
