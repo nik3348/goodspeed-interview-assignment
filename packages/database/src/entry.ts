@@ -32,3 +32,13 @@ export type MatchedChunkRow =
 export function toVectorLiteral(embedding: number[]): string {
   return JSON.stringify(embedding);
 }
+
+/**
+ * The width of the `document_chunks.embedding` column, as declared in
+ * `20260918130145_documents_and_chunks.sql`.
+ *
+ * Exported so the API can check its configured embedding model against the
+ * schema at boot rather than discovering the mismatch on the first insert.
+ * Changing this means writing a migration, not editing this constant.
+ */
+export const EMBEDDING_DIMENSIONS = 1536;

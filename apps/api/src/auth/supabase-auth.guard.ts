@@ -1,15 +1,15 @@
 import {
+  Inject,
   Injectable,
   UnauthorizedException,
   type CanActivate,
   type ExecutionContext,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { authenticatedUserSchema } from '@repo/contracts';
 import { createRemoteJWKSet, jwtVerify, type JWTPayload } from 'jose';
 
-import type { Environment } from '../config/environment';
+import { ENVIRONMENT, type Environment } from '../config/environment';
 
 import { IS_PUBLIC_KEY } from './public.decorator';
 import type { AuthenticatedRequest } from './request-auth';
@@ -36,11 +36,9 @@ export class SupabaseAuthGuard implements CanActivate {
 
   constructor(
     private readonly reflector: Reflector,
-    configService: ConfigService<Environment, true>,
+    @Inject(ENVIRONMENT) environment: Environment,
   ) {
-    const supabaseUrl = configService
-      .get('SUPABASE_URL', { infer: true })
-      .replace(/\/+$/, '');
+    const supabaseUrl = environment.SUPABASE_URL.replace(/\/+$/, '');
 
     this.issuer = `${supabaseUrl}/auth/v1`;
     this.jwks = createRemoteJWKSet(

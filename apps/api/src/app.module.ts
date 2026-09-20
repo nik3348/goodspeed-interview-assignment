@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { AiModule } from './ai/ai.module';
 import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
 import { ConfigModule } from './config/config.module';
@@ -12,6 +13,7 @@ import { SupabaseModule } from './supabase/supabase.module';
     ConfigModule,
     CommonModule,
     SupabaseModule,
+    AiModule,
     AuthModule,
     HealthModule,
     DocumentsModule,

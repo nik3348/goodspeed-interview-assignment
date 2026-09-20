@@ -1,9 +1,12 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import type { Database } from '@repo/database';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
-import type { Environment } from '../config/environment';
+import { ENVIRONMENT, type Environment } from '../config/environment';
 
 /**
  * A Supabase client typed against the generated schema, so a column rename in
@@ -36,12 +39,10 @@ export class SupabaseService {
   private readonly secretKey: string | undefined;
   private adminClient: TypedSupabaseClient | null = null;
 
-  constructor(configService: ConfigService<Environment, true>) {
-    this.url = configService.get('SUPABASE_URL', { infer: true });
-    this.publishableKey = configService.get('SUPABASE_PUBLISHABLE_KEY', {
-      infer: true,
-    });
-    this.secretKey = configService.get('SUPABASE_SECRET_KEY', { infer: true });
+  constructor(@Inject(ENVIRONMENT) environment: Environment) {
+    this.url = environment.SUPABASE_URL;
+    this.publishableKey = environment.SUPABASE_PUBLISHABLE_KEY;
+    this.secretKey = environment.SUPABASE_SECRET_KEY;
   }
 
   /** A client that acts as the signed-in user, subject to row-level security. */

@@ -1,44 +1,87 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
-  "globalDependencies": ["**/.env.*local"],
-  "globalEnv": ["NODE_ENV"],
+  "globalDependencies": [
+    "**/.env.*local"
+  ],
+  "globalEnv": [
+    "NODE_ENV"
+  ],
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "env": [
         "NEXT_PUBLIC_SUPABASE_URL",
         "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
         "NEXT_PUBLIC_API_URL"
       ],
-      "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**", "dist/**"]
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "!.next/dev/**",
+        "dist/**"
+      ]
     },
     "check-types": {
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "dev": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": false,
       "persistent": true
     },
     "lint": {},
     "test": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "env": [
-        "SUPABASE_URL",
+        "AI_API_KEY",
+        "AI_BASE_URL",
+        "AI_CHAT_API_KEY",
+        "AI_CHAT_BASE_URL",
+        "AI_CHAT_MODEL",
+        "AI_EMBEDDING_API_KEY",
+        "AI_EMBEDDING_BASE_URL",
+        "AI_EMBEDDING_BATCH_SIZE",
+        "AI_EMBEDDING_DIMENSIONS",
+        "AI_EMBEDDING_MODEL",
+        "AI_MAX_RETRIES",
+        "AI_REQUEST_TIMEOUT_MS",
+        "PORT",
         "SUPABASE_PUBLISHABLE_KEY",
         "SUPABASE_SECRET_KEY",
-        "WEB_ORIGINS",
-        "PORT"
+        "SUPABASE_URL",
+        "WEB_ORIGINS"
       ]
     },
     "test:e2e": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "env": [
-        "SUPABASE_URL",
+        "AI_API_KEY",
+        "AI_BASE_URL",
+        "AI_CHAT_API_KEY",
+        "AI_CHAT_BASE_URL",
+        "AI_CHAT_MODEL",
+        "AI_EMBEDDING_API_KEY",
+        "AI_EMBEDDING_BASE_URL",
+        "AI_EMBEDDING_BATCH_SIZE",
+        "AI_EMBEDDING_DIMENSIONS",
+        "AI_EMBEDDING_MODEL",
+        "AI_MAX_RETRIES",
+        "AI_REQUEST_TIMEOUT_MS",
+        "PORT",
         "SUPABASE_PUBLISHABLE_KEY",
         "SUPABASE_SECRET_KEY",
-        "WEB_ORIGINS",
-        "PORT"
+        "SUPABASE_URL",
+        "WEB_ORIGINS"
       ]
     }
   }
