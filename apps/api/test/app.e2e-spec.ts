@@ -1,6 +1,7 @@
 import type { INestApplication } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { describe, it, beforeAll, afterAll } from '@jest/globals';
+import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
+import { apiErrorSchema } from '@repo/contracts';
 import request from 'supertest';
 
 import { AppModule } from './../src/app.module';
@@ -36,5 +37,27 @@ describe('API (e2e)', () => {
       .get('/auth/me')
       .set('Authorization', 'Bearer not-a-jwt')
       .expect(401);
+  });
+
+  // The guard is global, so a new controller is protected by default. These
+  // assert that nothing in the documents module opted out by accident.
+  describe.each([
+    ['get', '/documents'],
+    ['get', '/documents/3f6a1c9e-1111-4a7b-9c2d-000000000001'],
+    ['post', '/documents'],
+    ['patch', '/documents/3f6a1c9e-1111-4a7b-9c2d-000000000001'],
+    ['delete', '/documents/3f6a1c9e-1111-4a7b-9c2d-000000000001'],
+  ] as const)('%s %s', (method, path) => {
+    it('requires a session', () => {
+      return request(app.getHttpServer())[method](path).expect(401);
+    });
+  });
+
+  it('answers an unknown route with the shared error envelope', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/nope')
+      .expect(404);
+
+    expect(apiErrorSchema.safeParse(response.body).success).toBe(true);
   });
 });

@@ -2,7 +2,6 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
-import { ApiExceptionFilter } from './common/api-exception.filter';
 import type { Environment } from './config/environment';
 
 async function bootstrap(): Promise<void> {
@@ -17,9 +16,8 @@ async function bootstrap(): Promise<void> {
     credentials: false,
   });
 
-  // Payload validation is per-route via `ZodValidationPipe`, using the
-  // schemas in `@repo/contracts` that the web app validates against too.
-  app.useGlobalFilters(new ApiExceptionFilter());
+  // Payload validation is per-route via `ZodValidationPipe`, and the error
+  // envelope is registered in `CommonModule`, so both apply in tests too.
   app.enableShutdownHooks();
 
   await app.listen(config.get('PORT', { infer: true }));

@@ -199,6 +199,9 @@ importers:
       '@repo/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
+      '@repo/database':
+        specifier: workspace:*
+        version: link:../../packages/database
       '@supabase/supabase-js':
         specifier: ^2.116.0
         version: 2.116.0
@@ -394,9 +397,18 @@ importers:
 
   packages/database:
     devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: 26.5.1
+        version: 26.5.1
       supabase:
         specifier: ^2.117.0
         version: 2.117.0
+      typescript:
+        specifier: 7.0.2
+        version: 7.0.2
 
   packages/eslint-config:
     devDependencies:

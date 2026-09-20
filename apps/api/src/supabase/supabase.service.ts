@@ -1,8 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import type { Database } from '@repo/database';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 import type { Environment } from '../config/environment';
+
+/**
+ * A Supabase client typed against the generated schema, so a column rename in
+ * a migration surfaces as a build error rather than a runtime `undefined`.
+ */
+export type TypedSupabaseClient = SupabaseClient<Database>;
 
 /** Server-side clients never persist or refresh sessions; the web app owns that. */
 const SERVER_AUTH_OPTIONS = {
@@ -26,8 +33,8 @@ const SERVER_AUTH_OPTIONS = {
 export class SupabaseService {
   private readonly url: string;
   private readonly publishableKey: string;
-  private readonly secretKey: string;
-  private adminClient: SupabaseClient | null = null;
+  private readonly secretKey: string | undefined;
+  private adminClient: TypedSupabaseClient | null = null;
 
   constructor(configService: ConfigService<Environment, true>) {
     this.url = configService.get('SUPABASE_URL', { infer: true });
@@ -38,16 +45,22 @@ export class SupabaseService {
   }
 
   /** A client that acts as the signed-in user, subject to row-level security. */
-  forUser(accessToken: string): SupabaseClient {
-    return createClient(this.url, this.publishableKey, {
+  forUser(accessToken: string): TypedSupabaseClient {
+    return createClient<Database>(this.url, this.publishableKey, {
       auth: SERVER_AUTH_OPTIONS,
       global: { headers: { Authorization: `Bearer ${accessToken}` } },
     });
   }
 
   /** A client that bypasses row-level security. Use only without a caller. */
-  get admin(): SupabaseClient {
-    this.adminClient ??= createClient(this.url, this.secretKey, {
+  get admin(): TypedSupabaseClient {
+    if (!this.secretKey) {
+      throw new InternalServerErrorException(
+        'SUPABASE_SECRET_KEY is not configured, so the privileged client is unavailable.',
+      );
+    }
+
+    this.adminClient ??= createClient<Database>(this.url, this.secretKey, {
       auth: SERVER_AUTH_OPTIONS,
     });
 

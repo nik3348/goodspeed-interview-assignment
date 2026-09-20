@@ -35,12 +35,29 @@ describe('validateEnvironment', () => {
     ]);
   });
 
-  it('fails fast when a required secret is missing', () => {
-    const { SUPABASE_SECRET_KEY: _omitted, ...incomplete } = VALID;
+  it('fails fast when a required value is missing', () => {
+    const { SUPABASE_PUBLISHABLE_KEY: _omitted, ...incomplete } = VALID;
 
     expect(() => validateEnvironment(incomplete)).toThrow(
-      /SUPABASE_SECRET_KEY/,
+      /SUPABASE_PUBLISHABLE_KEY/,
     );
+  });
+
+  it('treats a blank value as unset, as an unfilled .env placeholder is', () => {
+    const environment = validateEnvironment({
+      ...VALID,
+      PORT: '',
+      SUPABASE_SECRET_KEY: '   ',
+    });
+
+    expect(environment.PORT).toBe(3000);
+    expect(environment.SUPABASE_SECRET_KEY).toBeUndefined();
+  });
+
+  it('starts without a secret key, which only privileged work needs', () => {
+    const { SUPABASE_SECRET_KEY: _omitted, ...withoutSecret } = VALID;
+
+    expect(validateEnvironment(withoutSecret).SUPABASE_SECRET_KEY).toBeUndefined();
   });
 
   it('rejects a Supabase URL that is not a URL', () => {

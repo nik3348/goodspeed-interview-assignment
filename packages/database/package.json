@@ -4,6 +4,8 @@
   "private": true,
   "description": "Supabase schema: migrations, generated types, and the CLI scripts that apply them.",
   "scripts": {
+    "build": "tsc -b",
+    "check-types": "tsc --noEmit",
     "db:link": "supabase link",
     "db:push": "supabase db push",
     "db:diff": "supabase db diff -f",
@@ -14,6 +16,20 @@
     "db:advisors": "supabase db advisors --linked"
   },
   "devDependencies": {
-    "supabase": "^2.117.0"
+    "supabase": "^2.117.0",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "26.5.1",
+    "typescript": "7.0.2"
+  },
+  "main": "./dist/entry.js",
+  "types": "./dist/entry.d.ts",
+  "files": [
+    "./dist/**"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/entry.js",
+      "require": "./dist/entry.js"
+    }
   }
 }
