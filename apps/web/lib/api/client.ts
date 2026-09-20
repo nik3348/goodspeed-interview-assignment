@@ -26,6 +26,11 @@ export interface ApiRequestOptions<T> extends Omit<RequestInit, 'body'> {
 
 export interface ApiClient {
   request<T = unknown>(path: string, options?: ApiRequestOptions<T>): Promise<T>;
+  /**
+   * The raw `Response`, for endpoints whose body is consumed incrementally.
+   * Errors are still translated, so a caller only ever receives a live stream.
+   */
+  stream(path: string, options?: ApiRequestOptions<never>): Promise<Response>;
 }
 
 /**
@@ -40,24 +45,38 @@ export function createApiClient(
   getAccessToken: () => Promise<string | null>,
   baseUrl: string = requireBaseUrl(),
 ): ApiClient {
+  async function send(
+    path: string,
+    options: ApiRequestOptions<unknown>,
+  ): Promise<Response> {
+    const { body, schema: _schema, headers, ...init } = options;
+    const accessToken = await getAccessToken();
+
+    const response = await fetch(new URL(path, baseUrl), {
+      ...init,
+      headers: {
+        ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        ...headers,
+      },
+      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+    });
+
+    if (!response.ok) {
+      throw new ApiClientError(await toApiError(response));
+    }
+
+    return response;
+  }
+
   return {
+    async stream(path, options = {}) {
+      return send(path, { ...options, method: options.method ?? 'POST' });
+    },
+
     async request<T>(path: string, options: ApiRequestOptions<T> = {}) {
-      const { body, schema, headers, ...init } = options;
-      const accessToken = await getAccessToken();
-
-      const response = await fetch(new URL(path, baseUrl), {
-        ...init,
-        headers: {
-          ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
-          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-          ...headers,
-        },
-        ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-      });
-
-      if (!response.ok) {
-        throw new ApiClientError(await toApiError(response));
-      }
+      const { schema } = options;
+      const response = await send(path, options);
 
       if (response.status === 204) {
         return undefined as T;

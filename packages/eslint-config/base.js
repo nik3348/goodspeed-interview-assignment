@@ -47,6 +47,8 @@ export const config = [
     },
   },
   {
-    ignores: ["dist/**"],
+    // `collectCoverage` is on in the shared Jest config, so every package
+    // that runs tests emits a coverage report worth skipping.
+    ignores: ["dist/**", "coverage/**"],
   },
 ];
