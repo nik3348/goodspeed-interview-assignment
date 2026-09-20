@@ -1,8 +1,4 @@
-import {
-  APIConnectionError,
-  APIError,
-  APIUserAbortError,
-} from 'openai';
+import { APIConnectionError, APIError, APIUserAbortError } from 'openai';
 
 import {
   AiAuthenticationError,
@@ -77,7 +73,8 @@ function isContextLengthError(error: APIError): boolean {
 
 function retryAfterMs(error: APIError): number | null {
   const header = error.headers?.get?.('retry-after');
-  const seconds = header === undefined || header === null ? NaN : Number(header);
+  const seconds =
+    header === undefined || header === null ? NaN : Number(header);
 
   return Number.isFinite(seconds) ? seconds * 1000 : null;
 }

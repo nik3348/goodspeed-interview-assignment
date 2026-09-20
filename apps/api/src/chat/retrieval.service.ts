@@ -103,7 +103,5 @@ export class RetrievalService {
 function toSearchText(question: string, history: string[]): string {
   const recent = history.slice(-DEFAULTS.historyTurns);
 
-  return recent.length === 0
-    ? question
-    : [...recent, question].join('\n');
+  return recent.length === 0 ? question : [...recent, question].join('\n');
 }

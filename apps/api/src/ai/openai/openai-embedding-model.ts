@@ -3,7 +3,11 @@ import type OpenAI from 'openai';
 
 import { AiConfigurationError } from '../ai.errors';
 import type { EmbeddingModel } from '../embedding-model';
-import type { EmbeddingRequest, EmbeddingResult, TokenUsage } from '../messages';
+import type {
+  EmbeddingRequest,
+  EmbeddingResult,
+  TokenUsage,
+} from '../messages';
 
 import { toAiError } from './openai-error';
 

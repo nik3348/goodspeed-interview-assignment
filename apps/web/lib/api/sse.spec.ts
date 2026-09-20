@@ -60,7 +60,9 @@ describe('readServerSentEvents', () => {
   });
 
   it('splits several frames delivered in one read', async () => {
-    const response = responseOf(frame({ n: 1 }) + frame({ n: 2 }) + frame({ n: 3 }));
+    const response = responseOf(
+      frame({ n: 1 }) + frame({ n: 2 }) + frame({ n: 3 }),
+    );
 
     await expect(collect(response)).resolves.toEqual([
       { n: 1 },
@@ -70,10 +72,7 @@ describe('readServerSentEvents', () => {
   });
 
   it('carries a partial frame into the following read', async () => {
-    const response = responseOf(
-      `${frame({ n: 1 })}data: {"n":`,
-      '2}\n\n',
-    );
+    const response = responseOf(`${frame({ n: 1 })}data: {"n":`, '2}\n\n');
 
     await expect(collect(response)).resolves.toEqual([{ n: 1 }, { n: 2 }]);
   });
@@ -100,7 +99,9 @@ describe('readServerSentEvents', () => {
   });
 
   it('ignores comments and other SSE fields', async () => {
-    const response = responseOf(`:keep-alive\n\nevent: ping\n\n${frame({ n: 1 })}`);
+    const response = responseOf(
+      `:keep-alive\n\nevent: ping\n\n${frame({ n: 1 })}`,
+    );
 
     await expect(collect(response)).resolves.toEqual([{ n: 1 }]);
   });
@@ -119,8 +120,8 @@ describe('readServerSentEvents', () => {
   });
 
   it('yields nothing for a response with no body', async () => {
-    await expect(collect({ body: null } as unknown as Response)).resolves.toEqual(
-      [],
-    );
+    await expect(
+      collect({ body: null } as unknown as Response),
+    ).resolves.toEqual([]);
   });
 });

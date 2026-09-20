@@ -86,7 +86,9 @@ export class IndexingService {
       .eq('document_id', documentId);
 
     if (deleteError) {
-      throw new Error(`could not clear existing chunks: ${deleteError.message}`);
+      throw new Error(
+        `could not clear existing chunks: ${deleteError.message}`,
+      );
     }
 
     if (rows.length > 0) {

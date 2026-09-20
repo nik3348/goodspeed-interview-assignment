@@ -52,9 +52,7 @@ export class ChatController {
   }
 
   @Get(':id')
-  findOne(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ConversationDetail> {
+  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<ConversationDetail> {
     return this.conversations.findOneWithMessages(id);
   }
 

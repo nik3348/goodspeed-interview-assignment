@@ -10,7 +10,10 @@ import type {
 } from '@repo/contracts';
 import type { DocumentRow } from '@repo/database';
 
-import { IndexingService, type IndexingOutcome } from '../indexing/indexing.service';
+import {
+  IndexingService,
+  type IndexingOutcome,
+} from '../indexing/indexing.service';
 import { throwPostgrestError } from '../supabase/postgrest-error';
 import { SupabaseUserClient } from '../supabase/supabase-user-client';
 
@@ -40,7 +43,11 @@ export class DocumentsService {
     private readonly indexing: IndexingService,
   ) {}
 
-  async list({ limit, offset, tag }: ListDocumentsQuery): Promise<DocumentList> {
+  async list({
+    limit,
+    offset,
+    tag,
+  }: ListDocumentsQuery): Promise<DocumentList> {
     let query = this.supabase.db
       .from('documents')
       .select(SUMMARY_COLUMNS, { count: 'exact' })
@@ -133,7 +140,10 @@ export class DocumentsService {
       return toDocument(data);
     }
 
-    return toDocument(data, await this.indexing.indexDocument(id, data.content));
+    return toDocument(
+      data,
+      await this.indexing.indexDocument(id, data.content),
+    );
   }
 
   /** Retries indexing for a document whose last attempt failed. */
@@ -162,7 +172,13 @@ export class DocumentsService {
 
 type SummaryRow = Pick<
   DocumentRow,
-  'id' | 'title' | 'tags' | 'created_at' | 'updated_at' | 'indexed_at' | 'indexing_error'
+  | 'id'
+  | 'title'
+  | 'tags'
+  | 'created_at'
+  | 'updated_at'
+  | 'indexed_at'
+  | 'indexing_error'
 > & {
   /** PostgREST returns an embedded aggregate as a one-element array. */
   document_chunks?: { count: number }[] | null;
@@ -230,7 +246,8 @@ function toIndexing(
   const error = row.indexing_error ?? row.indexing?.error ?? null;
 
   return {
-    status: error !== null ? 'failed' : indexedAt !== null ? 'indexed' : 'pending',
+    status:
+      error !== null ? 'failed' : indexedAt !== null ? 'indexed' : 'pending',
     indexedAt,
     error,
     chunkCount,

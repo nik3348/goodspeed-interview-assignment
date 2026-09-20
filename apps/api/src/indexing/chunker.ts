@@ -186,7 +186,10 @@ function pack(
   };
 
   for (const block of blocks) {
-    const addedLength = currentLength === 0 ? block.text.length : currentLength + block.text.length + 2;
+    const addedLength =
+      currentLength === 0
+        ? block.text.length
+        : currentLength + block.text.length + 2;
 
     if (currentLength > 0 && addedLength > maxChars) {
       flush();
@@ -194,7 +197,9 @@ function pack(
 
     current.push(block);
     currentLength =
-      current.length === 1 ? block.text.length : currentLength + block.text.length + 2;
+      current.length === 1
+        ? block.text.length
+        : currentLength + block.text.length + 2;
   }
 
   flush();
@@ -208,8 +213,7 @@ function render(
   overlapChars: number,
 ): string {
   const previous = previousChunks.at(-1);
-  const overlap =
-    previous === undefined ? '' : tailOf(previous, overlapChars);
+  const overlap = previous === undefined ? '' : tailOf(previous, overlapChars);
 
   // Headings were lifted out of the text when blocks were built, so they have
   // to be put back. Re-emitting on every change rather than only at the start

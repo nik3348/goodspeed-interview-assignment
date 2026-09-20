@@ -57,7 +57,9 @@ describe('validateEnvironment', () => {
   it('starts without a secret key, which only privileged work needs', () => {
     const { SUPABASE_SECRET_KEY: _omitted, ...withoutSecret } = VALID;
 
-    expect(validateEnvironment(withoutSecret).SUPABASE_SECRET_KEY).toBeUndefined();
+    expect(
+      validateEnvironment(withoutSecret).SUPABASE_SECRET_KEY,
+    ).toBeUndefined();
   });
 
   it('rejects a Supabase URL that is not a URL', () => {

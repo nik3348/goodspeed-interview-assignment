@@ -57,9 +57,11 @@ export class SupabaseAuthGuard implements CanActivate {
       return true;
     }
 
-    const request = context.switchToHttp().getRequest<
-      AuthenticatedRequest & { headers: Record<string, string | undefined> }
-    >();
+    const request = context
+      .switchToHttp()
+      .getRequest<
+        AuthenticatedRequest & { headers: Record<string, string | undefined> }
+      >();
 
     const accessToken = extractBearerToken(request.headers.authorization);
 
@@ -76,7 +78,9 @@ export class SupabaseAuthGuard implements CanActivate {
     });
 
     if (!user.success) {
-      throw new UnauthorizedException('Access token is missing required claims.');
+      throw new UnauthorizedException(
+        'Access token is missing required claims.',
+      );
     }
 
     request.auth = { user: user.data, accessToken };

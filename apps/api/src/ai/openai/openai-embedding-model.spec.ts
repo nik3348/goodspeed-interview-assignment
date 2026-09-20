@@ -75,7 +75,9 @@ describe('OpenAiEmbeddingModel', () => {
 
     const result = await model(client, { batchSize: 3 }).embed({ inputs });
 
-    expect(requests.map((r) => (r.input as string[]).length)).toEqual([3, 3, 1]);
+    expect(requests.map((r) => (r.input as string[]).length)).toEqual([
+      3, 3, 1,
+    ]);
     expect(result.embeddings).toHaveLength(7);
   });
 

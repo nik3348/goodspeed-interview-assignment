@@ -1,8 +1,4 @@
-import type {
-  ChatCompletion,
-  ChatRequest,
-  ChatStreamEvent,
-} from './messages';
+import type { ChatCompletion, ChatRequest, ChatStreamEvent } from './messages';
 
 /** Injection token for the configured chat model. */
 export const CHAT_MODEL = Symbol('CHAT_MODEL');

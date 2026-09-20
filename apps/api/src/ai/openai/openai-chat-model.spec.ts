@@ -108,9 +108,9 @@ describe('OpenAiChatModel.complete', () => {
   it('copes with a provider that returns no choices', async () => {
     const { client } = fakeClient(() => completion({ choices: [] }));
 
-    await expect(model(client).complete({ messages: [] })).resolves.toMatchObject(
-      { content: '', finishReason: 'other' },
-    );
+    await expect(
+      model(client).complete({ messages: [] }),
+    ).resolves.toMatchObject({ content: '', finishReason: 'other' });
   });
 
   it('omits optional parameters the caller did not set', async () => {
@@ -175,7 +175,9 @@ describe('OpenAiChatModel.stream', () => {
 
   it('still ends with a completion when the provider omits usage', async () => {
     const { client } = fakeClient(() =>
-      chunks({ choices: [{ delta: { content: 'hi' }, finish_reason: 'stop' }] }),
+      chunks({
+        choices: [{ delta: { content: 'hi' }, finish_reason: 'stop' }],
+      }),
     );
 
     const { completion: final } = await collect(

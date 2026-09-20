@@ -49,17 +49,17 @@ describe('RetrievalService', () => {
   it('maps matched rows into the retrieval shape', async () => {
     const { service } = harness();
 
-    await expect(service.retrieve('How do cells make energy?')).resolves.toEqual(
-      [
-        {
-          chunkId: 'chunk-1',
-          documentId: 'doc-1',
-          documentTitle: 'Cell biology',
-          content: 'Mitochondria make ATP.',
-          similarity: 0.83,
-        },
-      ],
-    );
+    await expect(
+      service.retrieve('How do cells make energy?'),
+    ).resolves.toEqual([
+      {
+        chunkId: 'chunk-1',
+        documentId: 'doc-1',
+        documentTitle: 'Cell biology',
+        content: 'Mitochondria make ATP.',
+        similarity: 0.83,
+      },
+    ]);
   });
 
   it('embeds the question', async () => {
@@ -92,9 +92,9 @@ describe('RetrievalService', () => {
       history: ['What makes ATP?'],
     });
 
-    expect((embedded[0]?.[0] ?? '').trimEnd().endsWith('And why is that?')).toBe(
-      true,
-    );
+    expect(
+      (embedded[0]?.[0] ?? '').trimEnd().endsWith('And why is that?'),
+    ).toBe(true);
   });
 
   it('ignores history older than the last couple of turns', async () => {

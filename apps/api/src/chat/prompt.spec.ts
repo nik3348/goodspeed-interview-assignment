@@ -48,7 +48,11 @@ describe('buildPrompt', () => {
   });
 
   it('instructs the model to refuse rather than guess', () => {
-    const prompt = buildPrompt({ question: 'q', chunks: [chunk()], history: [] });
+    const prompt = buildPrompt({
+      question: 'q',
+      chunks: [chunk()],
+      history: [],
+    });
 
     expect(system(prompt).toLowerCase()).toContain('do not guess');
   });

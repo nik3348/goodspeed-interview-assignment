@@ -71,12 +71,7 @@ export const conversationListSchema = z.object({
 export type ConversationList = z.infer<typeof conversationListSchema>;
 
 export const createConversationSchema = z.object({
-  title: z
-    .string()
-    .trim()
-    .min(1)
-    .max(MAX_CONVERSATION_TITLE_LENGTH)
-    .optional(),
+  title: z.string().trim().min(1).max(MAX_CONVERSATION_TITLE_LENGTH).optional(),
 });
 
 export type CreateConversation = z.infer<typeof createConversationSchema>;
@@ -108,7 +103,10 @@ export type Answer = z.infer<typeof answerSchema>;
  * faster to feel and more honest about where the words are coming from.
  */
 export const chatStreamEventSchema = z.discriminatedUnion('type', [
-  z.object({ type: z.literal('citations'), citations: z.array(citationSchema) }),
+  z.object({
+    type: z.literal('citations'),
+    citations: z.array(citationSchema),
+  }),
   z.object({ type: z.literal('delta'), text: z.string() }),
   z.object({
     type: z.literal('done'),

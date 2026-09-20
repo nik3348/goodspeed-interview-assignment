@@ -52,7 +52,9 @@ describe('toAiError', () => {
   });
 
   it('tolerates a rate limit with no retry-after header', () => {
-    expect((toAiError(apiError(429)) as AiRateLimitError).retryAfterMs).toBeNull();
+    expect(
+      (toAiError(apiError(429)) as AiRateLimitError).retryAfterMs,
+    ).toBeNull();
   });
 
   it('treats a client abort as cancellation, not failure', () => {

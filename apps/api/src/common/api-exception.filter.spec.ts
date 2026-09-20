@@ -43,7 +43,7 @@ describe('ApiExceptionFilter', () => {
     });
   });
 
-  it('joins the validation pipe\'s list of messages', () => {
+  it("joins the validation pipe's list of messages", () => {
     const { host, json } = createHost();
 
     filter.catch(
@@ -79,6 +79,8 @@ describe('ApiExceptionFilter', () => {
 
     filter.catch(new NotFoundException(), host);
 
-    expect(apiErrorSchema.safeParse(json.mock.calls[0]?.[0]).success).toBe(true);
+    expect(apiErrorSchema.safeParse(json.mock.calls[0]?.[0]).success).toBe(
+      true,
+    );
   });
 });

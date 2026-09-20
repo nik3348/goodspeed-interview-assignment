@@ -56,12 +56,9 @@ describe('chunkDocument', () => {
 
   it('switches heading when a later section starts', () => {
     const chunks = chunkDocument(
-      [
-        '# First section',
-        paragraph(2),
-        '## Second section',
-        paragraph(2),
-      ].join('\n\n'),
+      ['# First section', paragraph(2), '## Second section', paragraph(2)].join(
+        '\n\n',
+      ),
       { maxChars: 150, overlapChars: 0 },
     );
 
@@ -70,7 +67,9 @@ describe('chunkDocument', () => {
   });
 
   it('does not emit a heading as a chunk of its own', () => {
-    const chunks = chunkDocument(['# Only a heading', paragraph(1)].join('\n\n'));
+    const chunks = chunkDocument(
+      ['# Only a heading', paragraph(1)].join('\n\n'),
+    );
 
     expect(chunks).toHaveLength(1);
     expect(chunks[0]?.content).toContain('mitochondrion');
@@ -126,8 +125,9 @@ describe('chunkDocument', () => {
   });
 
   it('loses no words from the source', () => {
-    const source = Array.from({ length: 5 }, (_, i) =>
-      `Paragraph ${i} about cells and energy production.`,
+    const source = Array.from(
+      { length: 5 },
+      (_, i) => `Paragraph ${i} about cells and energy production.`,
     ).join('\n\n');
 
     const joined = chunkDocument(source, { maxChars: 80, overlapChars: 0 })
@@ -140,10 +140,11 @@ describe('chunkDocument', () => {
   });
 
   it('folds a trailing scrap into the chunk before it', () => {
-    const chunks = chunkDocument(
-      [paragraph(6), 'Tiny.'].join('\n\n'),
-      { maxChars: 300, overlapChars: 0, minChars: 100 },
-    );
+    const chunks = chunkDocument([paragraph(6), 'Tiny.'].join('\n\n'), {
+      maxChars: 300,
+      overlapChars: 0,
+      minChars: 100,
+    });
 
     expect(chunks.at(-1)?.content).toContain('Tiny.');
     expect(chunks.at(-1)?.content.length).toBeGreaterThan(100);
@@ -189,8 +190,7 @@ describe('chunkDocument', () => {
       { maxChars: 2_000 },
     );
 
-    const occurrences =
-      chunks[0]?.content.match(/One heading/g)?.length ?? 0;
+    const occurrences = chunks[0]?.content.match(/One heading/g)?.length ?? 0;
 
     expect(occurrences).toBe(1);
   });

@@ -46,11 +46,11 @@ export class ApiExceptionFilter implements ExceptionFilter {
         message:
           typeof payload === 'string'
             ? payload
-            : ((payload as { message?: string | string[] }).message instanceof
+            : (((payload as { message?: string | string[] }).message instanceof
               Array
                 ? (payload as { message: string[] }).message.join(', ')
                 : (payload as { message?: string }).message) ??
-              exception.message,
+              exception.message),
       };
     }
 

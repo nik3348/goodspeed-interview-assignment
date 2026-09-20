@@ -1,0 +1,13 @@
+# Generated from the live schema by `pnpm db:types`; formatting it here only
+# creates a diff that the next regeneration undoes.
+packages/database/src/database.types.ts
+
+# Vendored agent skills. Upstream content, not ours to reformat.
+apps/web/.agents/
+apps/web/.claude/
+
+# Build output and lockfiles.
+**/dist/
+**/.next/
+**/coverage/
+pnpm-lock.yaml

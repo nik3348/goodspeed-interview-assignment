@@ -189,8 +189,9 @@ describe('IndexingService', () => {
     const update = db.operations.find((op) => op.table === 'documents');
 
     expect(update?.payload).toMatchObject({ indexed_at: null });
-    expect((update?.payload as { indexing_error: string }).indexing_error)
-      .toContain('rate limiting');
+    expect(
+      (update?.payload as { indexing_error: string }).indexing_error,
+    ).toContain('rate limiting');
   });
 
   it('marks the document indexed and clears any earlier error', async () => {

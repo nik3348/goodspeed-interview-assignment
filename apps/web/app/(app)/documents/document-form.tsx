@@ -95,7 +95,9 @@ export function DocumentForm({ document }: { document?: Document }) {
           required
           rows={18}
           value={content}
-          placeholder={'# Section\n\nMarkdown headings are kept with their text when the document is split up, so an answer can say where it came from.'}
+          placeholder={
+            '# Section\n\nMarkdown headings are kept with their text when the document is split up, so an answer can say where it came from.'
+          }
           onChange={(event) => setContent(event.target.value)}
           className="resize-y font-mono text-[0.875rem] leading-relaxed"
         />

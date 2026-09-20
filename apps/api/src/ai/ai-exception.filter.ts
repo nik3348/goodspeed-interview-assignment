@@ -36,7 +36,10 @@ export class AiExceptionFilter implements ExceptionFilter {
     const body = toApiError(exception);
 
     if (body.statusCode >= HttpStatus.INTERNAL_SERVER_ERROR) {
-      this.logger.error(`${exception.name}: ${exception.message}`, exception.cause);
+      this.logger.error(
+        `${exception.name}: ${exception.message}`,
+        exception.cause,
+      );
     }
 
     if (response.headersSent) {

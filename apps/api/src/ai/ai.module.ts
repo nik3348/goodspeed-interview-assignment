@@ -9,10 +9,7 @@ import { AiConfigurationError } from './ai.errors';
 import { CHAT_MODEL, type ChatModel } from './chat-model';
 import { EMBEDDING_MODEL, type EmbeddingModel } from './embedding-model';
 import { OpenAiChatModel } from './openai/openai-chat-model';
-import {
-  createOpenAiClient,
-  resolveEndpoint,
-} from './openai/openai-client';
+import { createOpenAiClient, resolveEndpoint } from './openai/openai-client';
 import { OpenAiEmbeddingModel } from './openai/openai-embedding-model';
 
 /**

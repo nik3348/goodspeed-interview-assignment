@@ -25,7 +25,10 @@ export interface ApiRequestOptions<T> extends Omit<RequestInit, 'body'> {
 }
 
 export interface ApiClient {
-  request<T = unknown>(path: string, options?: ApiRequestOptions<T>): Promise<T>;
+  request<T = unknown>(
+    path: string,
+    options?: ApiRequestOptions<T>,
+  ): Promise<T>;
   /**
    * The raw `Response`, for endpoints whose body is consumed incrementally.
    * Errors are still translated, so a caller only ever receives a live stream.

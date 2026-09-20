@@ -63,11 +63,7 @@ const environmentSchema = z.object({
   /** Inputs per embedding request; providers differ in what they accept. */
   AI_EMBEDDING_BATCH_SIZE: z.coerce.number().int().min(1).max(2048).default(96),
 
-  AI_REQUEST_TIMEOUT_MS: z.coerce
-    .number()
-    .int()
-    .positive()
-    .default(60_000),
+  AI_REQUEST_TIMEOUT_MS: z.coerce.number().int().positive().default(60_000),
   AI_MAX_RETRIES: z.coerce.number().int().min(0).max(5).default(2),
 
   /** Comma-separated origins allowed to call the API from a browser. */

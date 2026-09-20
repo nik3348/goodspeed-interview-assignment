@@ -97,11 +97,13 @@ function harness({
       };
     }),
     messages: jest.fn(async () => history),
-    appendUserMessage: jest.fn(async (_id: string, _u: string, content: string) => {
-      calls.push('append.user');
-      appended.push({ role: 'user', content });
-      return message({ id: 'user-msg', content });
-    }),
+    appendUserMessage: jest.fn(
+      async (_id: string, _u: string, content: string) => {
+        calls.push('append.user');
+        appended.push({ role: 'user', content });
+        return message({ id: 'user-msg', content });
+      },
+    ),
     appendAssistantMessage: jest.fn(
       async (_id: string, _u: string, answer: Record<string, unknown>) => {
         calls.push('append.assistant');
@@ -266,11 +268,9 @@ describe('ChatService.askStreaming', () => {
       service.askStreaming(CONVERSATION_ID, { question: 'How?' }),
     );
 
-    expect(events.filter((e) => e.type === 'delta').map((e) => e.text)).toEqual([
-      'Mito',
-      'chondria',
-      '.',
-    ]);
+    expect(events.filter((e) => e.type === 'delta').map((e) => e.text)).toEqual(
+      ['Mito', 'chondria', '.'],
+    );
     expect(events.at(-1)?.type).toBe('done');
   });
 

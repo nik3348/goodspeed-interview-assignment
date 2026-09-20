@@ -116,9 +116,7 @@ describe('DocumentsService', () => {
         count: 1,
       });
 
-      await expect(
-        service.list({ limit: 50, offset: 0 }),
-      ).resolves.toEqual({
+      await expect(service.list({ limit: 50, offset: 0 })).resolves.toEqual({
         total: 1,
         documents: [
           {
@@ -289,7 +287,7 @@ describe('DocumentsService', () => {
       expect(builder.argsFor('update')?.[0]).not.toHaveProperty('updated_at');
     });
 
-    it('reports another user\'s document as not found', async () => {
+    it("reports another user's document as not found", async () => {
       const { service } = serviceReturning({
         data: null,
         error: postgrestError('PGRST116'),
@@ -339,9 +337,7 @@ describe('DocumentsService', () => {
         tags: [],
       });
 
-      expect(indexed).toEqual([
-        { documentId: ROW.id, content: ROW.content },
-      ]);
+      expect(indexed).toEqual([{ documentId: ROW.id, content: ROW.content }]);
     });
 
     it('re-embeds when the content changed', async () => {

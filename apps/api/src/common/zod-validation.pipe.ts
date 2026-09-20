@@ -28,8 +28,7 @@ export class ZodValidationPipe<T> implements PipeTransform<unknown, T> {
       // An array of messages; `ApiExceptionFilter` joins them into one string.
       throw new BadRequestException(
         result.error.issues.map(
-          (issue) =>
-            `${issue.path.join('.') || 'body'}: ${issue.message}`,
+          (issue) => `${issue.path.join('.') || 'body'}: ${issue.message}`,
         ),
       );
     }
