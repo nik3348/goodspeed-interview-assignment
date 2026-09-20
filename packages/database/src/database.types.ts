@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      conversations: {
+        Row: {
+          created_at: string
+          id: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       document_chunks: {
         Row: {
           chunk_index: number
@@ -93,6 +117,114 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      message_citations: {
+        Row: {
+          chunk_id: string | null
+          created_at: string
+          document_id: string | null
+          document_title: string
+          excerpt: string
+          id: string
+          message_id: string
+          rank: number
+          similarity: number
+          user_id: string
+        }
+        Insert: {
+          chunk_id?: string | null
+          created_at?: string
+          document_id?: string | null
+          document_title: string
+          excerpt: string
+          id?: string
+          message_id: string
+          rank: number
+          similarity: number
+          user_id: string
+        }
+        Update: {
+          chunk_id?: string | null
+          created_at?: string
+          document_id?: string | null
+          document_title?: string
+          excerpt?: string
+          id?: string
+          message_id?: string
+          rank?: number
+          similarity?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_citations_chunk_id_fkey"
+            columns: ["chunk_id"]
+            isOneToOne: false
+            referencedRelation: "document_chunks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_citations_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_citations_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          completion_tokens: number | null
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          model: string | null
+          prompt_tokens: number | null
+          role: string
+          seq: number
+          user_id: string
+        }
+        Insert: {
+          completion_tokens?: number | null
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          model?: string | null
+          prompt_tokens?: number | null
+          role: string
+          seq?: never
+          user_id: string
+        }
+        Update: {
+          completion_tokens?: number | null
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          model?: string | null
+          prompt_tokens?: number | null
+          role?: string
+          seq?: never
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

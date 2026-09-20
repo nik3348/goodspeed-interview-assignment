@@ -47,6 +47,15 @@ describe('API (e2e)', () => {
     ['post', '/documents'],
     ['patch', '/documents/3f6a1c9e-1111-4a7b-9c2d-000000000001'],
     ['delete', '/documents/3f6a1c9e-1111-4a7b-9c2d-000000000001'],
+    ['get', '/conversations'],
+    ['post', '/conversations'],
+    ['get', '/conversations/3f6a1c9e-1111-4a7b-9c2d-000000000001'],
+    ['delete', '/conversations/3f6a1c9e-1111-4a7b-9c2d-000000000001'],
+    ['post', '/conversations/3f6a1c9e-1111-4a7b-9c2d-000000000001/messages'],
+    [
+      'post',
+      '/conversations/3f6a1c9e-1111-4a7b-9c2d-000000000001/messages/stream',
+    ],
   ] as const)('%s %s', (method, path) => {
     it('requires a session', () => {
       return request(app.getHttpServer())[method](path).expect(401);
