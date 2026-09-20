@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { documentListSchema } from '@repo/contracts';
 
-import { Button } from '@/components/ui/button';
+import { ButtonLink } from '@/components/ui/button-link';
 import { ApiClientError } from '@/lib/api/client';
 import { serverApiClient } from '@/lib/api/server';
 
@@ -40,9 +39,9 @@ export default async function DocumentsPage() {
           </p>
         </div>
 
-        <Button size="lg" render={<Link href="/documents/new" />}>
+        <ButtonLink size="lg" href="/documents/new">
           New document
-        </Button>
+        </ButtonLink>
       </div>
 
       <div className="mt-10">

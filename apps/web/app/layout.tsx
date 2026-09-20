@@ -26,6 +26,11 @@ export default function RootLayout({
     <html
       lang="en"
       className={cn('font-sans', workSans.variable, courierPrime.variable)}
+      // Browser extensions commonly stamp attributes onto <html> before React
+      // hydrates, which React reports as a mismatch the app can do nothing
+      // about. This suppresses that comparison for this element's attributes
+      // only — mismatches inside the tree are still reported.
+      suppressHydrationWarning
     >
       <body>{children}</body>
     </html>

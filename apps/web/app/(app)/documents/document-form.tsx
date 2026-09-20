@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   MAX_TITLE_LENGTH,
@@ -11,6 +10,7 @@ import {
 
 import { IndexingState } from '@/components/indexing-state';
 import { Button } from '@/components/ui/button';
+import { ButtonLink } from '@/components/ui/button-link';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -131,9 +131,9 @@ export function DocumentForm({ document }: { document?: Document }) {
               : 'Create document'}
         </Button>
 
-        <Button variant="ghost" size="lg" render={<Link href="/documents" />}>
+        <ButtonLink variant="ghost" size="lg" href="/documents">
           Back to documents
-        </Button>
+        </ButtonLink>
 
         {saved ? (
           <span className="ml-auto">
