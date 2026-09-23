@@ -9,8 +9,8 @@ be dropped into by configuration.
 
 ## Walkthroughs
 
-- **The app** — _TODO: Loom link_
-- **How I used AI to build it** — _TODO: Loom link_
+- **The app** — https://www.loom.com/share/3f477b95612d49f4b2030811e51924f4
+- **How I used AI to build it** — https://www.loom.com/share/210233a014814429a6b7dfbc6d14072c
 
 ## Quick start
 
